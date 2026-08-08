@@ -11,6 +11,7 @@ A mobile-first redesign of the ABTalks 60-day coding challenge platform, built s
 /
 /dashboard
 /day/12
+```
 
 ## The "Thoughtful Idea" 💡
 **Streak Shields:** To reduce burnout and student anxiety, I introduced a "Streak Shield" mechanism. Students earn 1 shield per 7-day streak. When submitting their daily proof of work, they have the option to use a shield to protect against a missed day, making the interface feel like a modern, gamified learning app.
