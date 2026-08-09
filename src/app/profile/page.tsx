@@ -2,21 +2,71 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // <-- রিডাইরেক্ট করার জন্য যোগ করা হয়েছে
 import BottomNav from '@/components/BottomNav';
 import { studentData } from '@/data/mockData';
-import { Bell, Shield, Moon, Smartphone, Mail, Check, Palette, User, ArrowLeft, Zap, Star,  } from 'lucide-react';
-import Icon from '@/components/ui/AppIcon';
+import {
+  Bell,
+  Shield,
+  Moon,
+  Smartphone,
+  Mail,
+  Check,
+  Palette,
+  User,
+  ArrowLeft,
+  Zap,
+  Star,
+  X,
+  Code,
+  ExternalLink,
+} from 'lucide-react';
 
-
-const AVATARS = ['AS', 'AB', 'RK', 'PV', 'MN', 'DK', 'SK', 'VR', 'NP', 'KS'];
+const AVATARS = ['RS', 'AB', 'RK', 'PV', 'MN', 'DK', 'SK', 'VR', 'NP', 'KS'];
 
 const THEME_COLORS = [
-  { id: 'purple-cyan', name: 'Neon Pulse', primary: '#6C63FF', secondary: '#00D4FF', accent: '#00FF88' },
-  { id: 'orange-pink', name: 'Sunset Fire', primary: '#FF6B35', secondary: '#FF3CAC', accent: '#FFD700' },
-  { id: 'green-teal', name: 'Matrix Green', primary: '#00FF88', secondary: '#00D4FF', accent: '#6C63FF' },
-  { id: 'gold-amber', name: 'Golden Hour', primary: '#FFD700', secondary: '#FF6B35', accent: '#00FF88' },
-  { id: 'pink-purple', name: 'Sakura Wave', primary: '#FF3CAC', secondary: '#784BA0', accent: '#00D4FF' },
-  { id: 'blue-indigo', name: 'Deep Ocean', primary: '#2B86C5', secondary: '#6C63FF', accent: '#00FF88' },
+  {
+    id: 'purple-cyan',
+    name: 'Neon Pulse',
+    primary: '#6C63FF',
+    secondary: '#00D4FF',
+    accent: '#00FF88',
+  },
+  {
+    id: 'orange-pink',
+    name: 'Sunset Fire',
+    primary: '#FF6B35',
+    secondary: '#FF3CAC',
+    accent: '#FFD700',
+  },
+  {
+    id: 'green-teal',
+    name: 'Matrix Green',
+    primary: '#00FF88',
+    secondary: '#00D4FF',
+    accent: '#6C63FF',
+  },
+  {
+    id: 'gold-amber',
+    name: 'Golden Hour',
+    primary: '#FFD700',
+    secondary: '#FF6B35',
+    accent: '#00FF88',
+  },
+  {
+    id: 'pink-purple',
+    name: 'Sakura Wave',
+    primary: '#FF3CAC',
+    secondary: '#784BA0',
+    accent: '#00D4FF',
+  },
+  {
+    id: 'blue-indigo',
+    name: 'Deep Ocean',
+    primary: '#2B86C5',
+    secondary: '#6C63FF',
+    accent: '#00FF88',
+  },
 ];
 
 interface NotifPrefs {
@@ -28,6 +78,7 @@ interface NotifPrefs {
 }
 
 export default function ProfilePage() {
+  const router = useRouter(); // <-- ড্যাশবোর্ডে রিডাইরেক্ট করার জন্য
   const { student } = studentData;
 
   const [selectedAvatar, setSelectedAvatar] = useState(student.avatar);
@@ -40,6 +91,7 @@ export default function ProfilePage() {
     reminderTime: '20:00',
   });
   const [saved, setSaved] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   const currentTheme = THEME_COLORS.find((t) => t.id === selectedTheme) ?? THEME_COLORS[0];
 
@@ -48,9 +100,13 @@ export default function ProfilePage() {
     setNotifPrefs((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
+  // 🚀 Save & Redirect Function
   const handleSave = () => {
     setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    setTimeout(() => {
+      setSaved(false);
+      router.push('/dashboard'); // 1 সেকেন্ড পর ড্যাশবোর্ডে নিয়ে যাবে
+    }, 1000);
   };
 
   const shieldCount = student.streakShields;
@@ -92,13 +148,18 @@ export default function ProfilePage() {
               border: saved ? '1px solid rgba(0,255,136,0.3)' : 'none',
             }}
           >
-            {saved ? <><Check size={12} /> Saved!</> : 'Save Changes'}
+            {saved ? (
+              <>
+                <Check size={12} /> Saved!
+              </>
+            ) : (
+              'Save Changes'
+            )}
           </button>
         </div>
       </header>
 
       <div className="px-5 pt-5 max-w-lg mx-auto space-y-5">
-
         {/* Profile Hero Card */}
         <div
           className="rounded-2xl p-5 relative overflow-hidden"
@@ -115,30 +176,52 @@ export default function ProfilePage() {
             }}
           />
           <div className="flex items-center gap-4 relative z-10">
-            {/* Avatar display */}
-            <div
-              className="w-16 h-16 rounded-2xl flex items-center justify-center font-black text-xl flex-shrink-0"
+            
+            {/* 🚀 Avatar display (With Clickable Badge) */}
+            <button
+              onClick={() => setIsProfileModalOpen(true)}
+              className="relative w-16 h-16 rounded-2xl flex items-center justify-center font-black text-xl flex-shrink-0 cursor-pointer transition-transform hover:scale-105 active:scale-95"
               style={{
                 background: `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.secondary})`,
                 boxShadow: `0 8px 24px ${currentTheme.primary}40`,
-                transition: 'all 0.4s ease',
+                color: '#fff'
               }}
             >
               {selectedAvatar}
-            </div>
+              {/* ✨ NEW CLICKABLE BADGE ✨ */}
+              <div 
+                className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center shadow-lg"
+                style={{ 
+                  background: currentTheme.accent, 
+                  border: '2px solid var(--background)',
+                  color: '#000'
+                }}
+              >
+                <User size={11} strokeWidth={3} />
+              </div>
+            </button>
+
             <div className="flex-1 min-w-0">
               <p className="font-black text-lg text-foreground truncate">{student.name}</p>
               <p className="text-xs text-muted-foreground truncate">{student.college}</p>
               <div className="flex items-center gap-2 mt-1.5">
                 <span
                   className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                  style={{ background: `${currentTheme.primary}20`, color: currentTheme.primary, border: `1px solid ${currentTheme.primary}30` }}
+                  style={{
+                    background: `${currentTheme.primary}20`,
+                    color: currentTheme.primary,
+                    border: `1px solid ${currentTheme.primary}30`,
+                  }}
                 >
                   {student.track}
                 </span>
                 <span
                   className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                  style={{ background: 'rgba(255,215,0,0.15)', color: 'var(--gold)', border: '1px solid rgba(255,215,0,0.25)' }}
+                  style={{
+                    background: 'rgba(255,215,0,0.15)',
+                    color: 'var(--gold)',
+                    border: '1px solid rgba(255,215,0,0.25)',
+                  }}
                 >
                   {student.level}
                 </span>
@@ -156,7 +239,10 @@ export default function ProfilePage() {
               <div
                 key={s.label}
                 className="rounded-xl p-2.5 text-center"
-                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
+                style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.07)',
+                }}
               >
                 <p className="font-black text-base text-foreground">{s.value}</p>
                 <p className="text-[10px] text-muted-foreground font-semibold">{s.label}</p>
@@ -184,10 +270,7 @@ export default function ProfilePage() {
               <p className="font-black text-sm text-foreground">Streak Shields</p>
               <p className="text-[11px] text-muted-foreground">Earned 1 shield per 7-day streak</p>
             </div>
-            <div
-              className="ml-auto text-2xl font-black"
-              style={{ color: '#00D4FF' }}
-            >
+            <div className="ml-auto text-2xl font-black" style={{ color: '#00D4FF' }}>
               {shieldCount}
             </div>
           </div>
@@ -200,7 +283,10 @@ export default function ProfilePage() {
                 className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300"
                 style={{
                   background: i < shieldCount ? 'rgba(0,212,255,0.2)' : 'rgba(255,255,255,0.04)',
-                  border: i < shieldCount ? '1px solid rgba(0,212,255,0.4)' : '1px solid rgba(255,255,255,0.08)',
+                  border:
+                    i < shieldCount
+                      ? '1px solid rgba(0,212,255,0.4)'
+                      : '1px solid rgba(255,255,255,0.08)',
                 }}
               >
                 <Shield
@@ -212,7 +298,10 @@ export default function ProfilePage() {
             ))}
             <div
               className="flex-1 rounded-xl px-3 py-2 flex items-center"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+              style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.06)',
+              }}
             >
               <p className="text-[11px] text-muted-foreground">
                 {shieldCount === 0
@@ -230,7 +319,10 @@ export default function ProfilePage() {
                 {7 - (student.currentStreak % 7)} days
               </p>
             </div>
-            <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+            <div
+              className="h-1.5 rounded-full overflow-hidden"
+              style={{ background: 'rgba(255,255,255,0.06)' }}
+            >
               <div
                 className="h-full rounded-full transition-all duration-700"
                 style={{
@@ -258,17 +350,23 @@ export default function ProfilePage() {
             {AVATARS.map((av) => (
               <button
                 key={av}
-                onClick={() => setSelectedAvatar(av)}
+                onClick={() => {
+                  setSelectedAvatar(av);
+                  setIsProfileModalOpen(true); // 🚀 ক্লিক করলেই মোডাল ওপেন হবে!
+                }}
                 className="aspect-square rounded-xl flex items-center justify-center font-black text-sm transition-all duration-200"
                 style={{
-                  background: selectedAvatar === av
-                    ? `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.secondary})`
-                    : 'rgba(255,255,255,0.05)',
-                  border: selectedAvatar === av
-                    ? `1px solid ${currentTheme.primary}60`
-                    : '1px solid rgba(255,255,255,0.08)',
+                  background:
+                    selectedAvatar === av
+                      ? `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.secondary})`
+                      : 'rgba(255,255,255,0.05)',
+                  border:
+                    selectedAvatar === av
+                      ? `1px solid ${currentTheme.primary}60`
+                      : '1px solid rgba(255,255,255,0.08)',
                   color: selectedAvatar === av ? '#fff' : 'rgba(255,255,255,0.5)',
-                  boxShadow: selectedAvatar === av ? `0 4px 12px ${currentTheme.primary}40` : 'none',
+                  boxShadow:
+                    selectedAvatar === av ? `0 4px 12px ${currentTheme.primary}40` : 'none',
                   transform: selectedAvatar === av ? 'scale(1.05)' : 'scale(1)',
                 }}
               >
@@ -297,25 +395,37 @@ export default function ProfilePage() {
                 onClick={() => setSelectedTheme(theme.id)}
                 className="rounded-xl p-3 flex items-center gap-3 transition-all duration-200 text-left"
                 style={{
-                  background: selectedTheme === theme.id
-                    ? `linear-gradient(135deg, ${theme.primary}20, ${theme.secondary}10)`
-                    : 'rgba(255,255,255,0.03)',
-                  border: selectedTheme === theme.id
-                    ? `1px solid ${theme.primary}50`
-                    : '1px solid rgba(255,255,255,0.07)',
+                  background:
+                    selectedTheme === theme.id
+                      ? `linear-gradient(135deg, ${theme.primary}20, ${theme.secondary}10)`
+                      : 'rgba(255,255,255,0.03)',
+                  border:
+                    selectedTheme === theme.id
+                      ? `1px solid ${theme.primary}50`
+                      : '1px solid rgba(255,255,255,0.07)',
                 }}
               >
                 {/* Color swatch */}
                 <div className="flex gap-1 flex-shrink-0">
                   <div className="w-4 h-4 rounded-full" style={{ background: theme.primary }} />
-                  <div className="w-4 h-4 rounded-full -ml-1.5" style={{ background: theme.secondary }} />
-                  <div className="w-4 h-4 rounded-full -ml-1.5" style={{ background: theme.accent }} />
+                  <div
+                    className="w-4 h-4 rounded-full -ml-1.5"
+                    style={{ background: theme.secondary }}
+                  />
+                  <div
+                    className="w-4 h-4 rounded-full -ml-1.5"
+                    style={{ background: theme.accent }}
+                  />
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs font-bold text-foreground truncate">{theme.name}</p>
                 </div>
                 {selectedTheme === theme.id && (
-                  <Check size={14} className="ml-auto flex-shrink-0" style={{ color: theme.primary }} />
+                  <Check
+                    size={14}
+                    className="ml-auto flex-shrink-0"
+                    style={{ color: theme.primary }}
+                  />
                 )}
               </button>
             ))}
@@ -341,7 +451,7 @@ export default function ProfilePage() {
                 key: 'dailyReminder' as keyof NotifPrefs,
                 icon: Smartphone,
                 label: 'Daily Reminder',
-                desc: 'Remind me to submit today\'s challenge',
+                desc: "Remind me to submit today's challenge",
               },
               {
                 key: 'streakWarning' as keyof NotifPrefs,
@@ -369,7 +479,9 @@ export default function ProfilePage() {
                   className="flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200"
                   style={{
                     background: isOn ? `${currentTheme.primary}08` : 'rgba(255,255,255,0.02)',
-                    border: isOn ? `1px solid ${currentTheme.primary}25` : '1px solid rgba(255,255,255,0.06)',
+                    border: isOn
+                      ? `1px solid ${currentTheme.primary}25`
+                      : '1px solid rgba(255,255,255,0.06)',
                   }}
                   onClick={() => toggleNotif(key)}
                 >
@@ -379,7 +491,10 @@ export default function ProfilePage() {
                       background: isOn ? `${currentTheme.primary}20` : 'rgba(255,255,255,0.05)',
                     }}
                   >
-                    <Icon size={15} style={{ color: isOn ? currentTheme.primary : 'rgba(255,255,255,0.3)' }} />
+                    <Icon
+                      size={15}
+                      style={{ color: isOn ? currentTheme.primary : 'rgba(255,255,255,0.3)' }}
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-foreground">{label}</p>
@@ -389,7 +504,9 @@ export default function ProfilePage() {
                   <div
                     className="w-10 h-5.5 rounded-full relative flex-shrink-0 transition-all duration-300"
                     style={{
-                      background: isOn ? `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.secondary})` : 'rgba(255,255,255,0.1)',
+                      background: isOn
+                        ? `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.secondary})`
+                        : 'rgba(255,255,255,0.1)',
                       width: '40px',
                       height: '22px',
                     }}
@@ -430,7 +547,9 @@ export default function ProfilePage() {
                 <input
                   type="time"
                   value={notifPrefs.reminderTime}
-                  onChange={(e) => setNotifPrefs((prev) => ({ ...prev, reminderTime: e.target.value }))}
+                  onChange={(e) =>
+                    setNotifPrefs((prev) => ({ ...prev, reminderTime: e.target.value }))
+                  }
                   className="text-sm font-bold text-foreground outline-none rounded-lg px-2 py-1"
                   style={{
                     background: 'rgba(255,255,255,0.06)',
@@ -454,20 +573,46 @@ export default function ProfilePage() {
           <p className="font-black text-sm text-foreground mb-4">Challenge Progress</p>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { label: 'Days Completed', value: student.completedDays, total: student.totalDays, color: currentTheme.primary },
-              { label: 'Longest Streak', value: student.longestStreak, total: 60, color: '#FF6B35' },
-              { label: 'Rank', value: `#${student.rank}`, total: null, color: currentTheme.secondary },
-              { label: 'Missed Days', value: student.missedDays, total: null, color: 'rgba(255,255,255,0.4)' },
+              {
+                label: 'Days Completed',
+                value: student.completedDays,
+                total: student.totalDays,
+                color: currentTheme.primary,
+              },
+              {
+                label: 'Longest Streak',
+                value: student.longestStreak,
+                total: 60,
+                color: '#FF6B35',
+              },
+              {
+                label: 'Rank',
+                value: `#${student.rank}`,
+                total: null,
+                color: currentTheme.secondary,
+              },
+              {
+                label: 'Missed Days',
+                value: student.missedDays,
+                total: null,
+                color: 'rgba(255,255,255,0.4)',
+              },
             ].map((item) => (
               <div
                 key={item.label}
                 className="rounded-xl p-3"
-                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                }}
               >
                 <p className="font-black text-xl" style={{ color: item.color }}>
-                  {item.value}{item.total ? `/${item.total}` : ''}
+                  {item.value}
+                  {item.total ? `/${item.total}` : ''}
                 </p>
-                <p className="text-[11px] text-muted-foreground font-semibold mt-0.5">{item.label}</p>
+                <p className="text-[11px] text-muted-foreground font-semibold mt-0.5">
+                  {item.label}
+                </p>
               </div>
             ))}
           </div>
@@ -475,9 +620,14 @@ export default function ProfilePage() {
           <div className="mt-4">
             <div className="flex items-center justify-between mb-1.5">
               <p className="text-[11px] text-muted-foreground font-semibold">Overall Completion</p>
-              <p className="text-[11px] font-black" style={{ color: currentTheme.primary }}>{completionPct}%</p>
+              <p className="text-[11px] font-black" style={{ color: currentTheme.primary }}>
+                {completionPct}%
+              </p>
             </div>
-            <div className="h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+            <div
+              className="h-2 rounded-full overflow-hidden"
+              style={{ background: 'rgba(255,255,255,0.06)' }}
+            >
               <div
                 className="h-full rounded-full transition-all duration-700"
                 style={{
@@ -515,8 +665,167 @@ export default function ProfilePage() {
             ))}
           </div>
         </div>
-
       </div>
+
+      {/* PROFILE MODAL (Student Proof Record) */}
+      {isProfileModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-5 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div
+            className="relative w-full max-w-sm rounded-[2rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200"
+            style={{ background: '#111827', border: '1px solid rgba(255,255,255,0.05)' }}
+          >
+            {/* Top Header — themed gradient */}
+            <div
+              className="h-32 p-5 relative"
+              style={{ background: `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.secondary})` }}
+            >
+              <span className="px-3 py-1.5 bg-black/30 text-white text-[10px] font-mono tracking-widest rounded-lg uppercase font-bold backdrop-blur-md">
+                Student Proof Record
+              </span>
+              <button
+                onClick={() => setIsProfileModalOpen(false)}
+                className="absolute top-5 right-5 w-8 h-8 bg-black/20 rounded-full flex items-center justify-center text-white hover:bg-black/40 transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Content Body */}
+            <div className="px-6 pb-6 relative">
+              {/* Dynamic Avatar */}
+              <div className="flex justify-between items-end -mt-10 mb-5">
+                <div
+                  className="w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-black text-white shadow-xl relative z-10"
+                  style={{
+                    background: `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.secondary})`,
+                    border: '4px solid #111827',
+                  }}
+                >
+                  {selectedAvatar}
+                </div>
+              </div>
+
+              {/* Completion Bar — themed */}
+              <div
+                className="rounded-xl p-3 mb-6"
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                }}
+              >
+                <div className="flex justify-between text-xs font-mono text-slate-300 mb-2 font-semibold">
+                  <span>Profile Completion</span>
+                  <span className="font-bold" style={{ color: currentTheme.primary }}>{completionPct}%</span>
+                </div>
+                <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-700"
+                    style={{
+                      width: `${completionPct}%`,
+                      background: `linear-gradient(90deg, ${currentTheme.primary}, ${currentTheme.secondary})`,
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* User Info */}
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-1">
+                  <h2 className="text-xl font-black text-white">{student?.name}</h2>
+                  <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-[10px] font-bold">
+                    Verified Student
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 font-mono">
+                  @{student?.name?.toLowerCase().replace(' ', '_')} • {student?.college}
+                </p>
+              </div>
+
+              {/* Active Track — themed */}
+              <div
+                className="rounded-xl p-3 mb-6 flex items-center justify-between"
+                style={{
+                  background: 'rgba(255,255,255,0.02)',
+                  border: '1px solid rgba(255,255,255,0.05)',
+                }}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-9 h-9 rounded-xl flex items-center justify-center"
+                    style={{
+                      background: `${currentTheme.primary}1A`,
+                      color: currentTheme.primary,
+                      border: `1px solid ${currentTheme.primary}33`,
+                    }}
+                  >
+                    <Code size={16} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-mono text-slate-400 uppercase tracking-wider mb-0.5">
+                      Active Track
+                    </p>
+                    <p className="text-sm font-bold text-white">{student?.track}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs font-mono font-bold" style={{ color: currentTheme.primary }}>
+                    Day {student?.completedDays} / {student?.totalDays}
+                  </p>
+                </div>
+              </div>
+
+              {/* Links — now clickable */}
+              <div className="space-y-2 mb-8">
+                <p className="text-[10px] font-mono text-slate-400 uppercase tracking-wider mb-2">
+                  Verified Proof Links
+                </p>
+                <a
+                  href={`https://github.com/Cybertech5544`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex justify-between items-center rounded-xl p-3 transition-colors hover:bg-white/5"
+                  style={{
+                    background: 'rgba(0,0,0,0.2)',
+                    border: '1px solid rgba(255,255,255,0.05)',
+                  }}
+                >
+                  <span className="text-xs font-mono text-slate-300 truncate pr-4">
+                    https://github.com/Cybertech5544
+                  </span>
+                  <ExternalLink size={14} className="flex-shrink-0" style={{ color: currentTheme.primary }} />
+                </a>
+                <a
+                  href={`https://www.linkedin.com/in/ritesh-saha-a8881126b`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex justify-between items-center rounded-xl p-3 transition-colors hover:bg-white/5"
+                  style={{
+                    background: 'rgba(0,0,0,0.2)',
+                    border: '1px solid rgba(255,255,255,0.05)',
+                  }}
+                >
+                  <span className="text-xs font-mono text-slate-300 truncate pr-4">
+                    https://www.linkedin.com/in/ritesh-saha-a8881126b
+                  </span>
+                  <ExternalLink size={14} className="flex-shrink-0" style={{ color: currentTheme.primary }} />
+                </a>
+              </div>
+
+              {/* Close Button — themed */}
+              <button
+                onClick={() => setIsProfileModalOpen(false)}
+                className="w-full py-4 text-white font-black rounded-xl text-sm transition-all active:scale-95 hover:opacity-90"
+                style={{
+                  background: `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.secondary})`,
+                  boxShadow: `0 0 20px ${currentTheme.primary}4D`,
+                }}
+              >
+                Close Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <BottomNav />
     </div>

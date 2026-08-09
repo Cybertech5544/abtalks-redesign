@@ -46,7 +46,7 @@ export default function TestimonialsSection() {
   const cardSpeeds = [0.06, 0.03, 0.09];
 
   return (
-    <section ref={sectionRef} className="py-20 px-5 max-w-5xl mx-auto overflow-hidden">
+    <section ref={sectionRef} className="py-20 px-5 max-w-5xl mx-auto">
       <div className="text-center mb-12">
         <p className="text-xs font-bold uppercase tracking-widest text-primary mb-3">
           Real Students, Real Outcomes
@@ -55,7 +55,7 @@ export default function TestimonialsSection() {
           What Builders Say
         </h2>
       </div>
-      <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 md:grid md:grid-cols-3 md:overflow-visible">
+      <div className="flex gap-4 overflow-x-auto overflow-y-hidden scrollbar-hide py-12 md:py-0 md:grid md:grid-cols-3 md:overflow-visible">
         {testimonials?.map((t, idx) => {
           const speed = cardSpeeds?.[idx % cardSpeeds?.length];
           const direction = idx % 2 === 0 ? 1 : -1;

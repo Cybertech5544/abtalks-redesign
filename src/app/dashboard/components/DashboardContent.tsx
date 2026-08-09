@@ -92,15 +92,16 @@ export default function DashboardContent() {
                 style={{ background: 'var(--warning)' }}
               />
             </button>
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs cursor-pointer"
+            <Link
+              href="/profile"
+              className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs cursor-pointer transition-opacity hover:opacity-80 active:scale-95"
               style={{
                 background: 'linear-gradient(135deg, var(--primary), #8B83FF)',
                 color: '#fff',
               }}
             >
               {student?.avatar}
-            </div>
+            </Link>
           </div>
         </div>
       </header>

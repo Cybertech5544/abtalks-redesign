@@ -1,10 +1,10 @@
 export const studentData = {
   student: {
     id: 'student-001',
-    name: 'Arjun Sharma',
-    college: 'VIT Vellore',
+    name: 'Ritesh Saha',
+    college: 'Sir Gurudas Mahavidyalaya',
     track: 'Software Engineering',
-    avatar: 'AS',
+    avatar: 'RS',
     joinDate: '2024-01-01',
     currentDay: 12,
     totalDays: 60,
@@ -64,7 +64,7 @@ export const leaderboardData = {
     { id: 'student-002', rank: 44, name: 'Priya Krishnamurthy', college: 'IIT Madras', streak: 28, xp: 3100, avatar: 'PK' },
     { id: 'student-003', rank: 45, name: 'Rahul Joshi', college: 'BITS Pilani', streak: 25, xp: 3050, avatar: 'RJ' },
     { id: 'student-004', rank: 46, name: 'Sneha Iyer', college: 'NIT Trichy', streak: 22, xp: 2900, avatar: 'SI' },
-    { id: 'student-001', rank: 47, name: 'Arjun Sharma', college: 'VIT Vellore', streak: 8, xp: 2750, avatar: 'AS', isCurrentUser: true },
+    { id: 'student-001', rank: 47, name: 'Ritesh Saha', college: 'Sir Gurudas Mahavidyalaya', streak: 8, xp: 2750, avatar: 'RS', isCurrentUser: true },
     { id: 'student-005', rank: 48, name: 'Karthik Reddy', college: 'IIIT Hyderabad', streak: 7, xp: 2600, avatar: 'KR' },
     { id: 'student-006', rank: 49, name: 'Ananya Das', college: 'Jadavpur University', streak: 6, xp: 2500, avatar: 'AD' },
   ],
