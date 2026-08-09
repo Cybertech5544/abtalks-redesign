@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // <-- useEffect ইমপোর্ট করা হয়েছে
 import { CheckCircle2, Loader2, Shield } from 'lucide-react';
 import Link from 'next/link';
 import ConfettiExplosion from './ConfettiExplosion';
@@ -26,6 +26,7 @@ interface SubmissionFormProps {
   currentStreak: number;
   streakShields: number;
   onSuccess?: () => void;
+  demoTrigger?: number;
 }
 
 function isValidGithubUrl(url: string): boolean {
@@ -41,6 +42,7 @@ export default function SubmissionForm({
   currentStreak,
   streakShields,
   onSuccess,
+  demoTrigger
 }: SubmissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -55,24 +57,43 @@ export default function SubmissionForm({
   const linkedinValid = isValidLinkedinUrl(linkedinValue);
   const canSubmit = githubValid && linkedinValid;
 
+  // ✨ ডেমো ডেটা ফিল করার লজিক ✨
+  useEffect(() => {
+    if (demoTrigger && demoTrigger > 0) {
+      setGithubValue('https://github.com/Cybertech5544/abtalks-challenge-day12');
+      setLinkedinValue('https://linkedin.com/posts/ritesh-saha-a8881126b/my-abtalks-submission');
+      setGithubError('');
+      setLinkedinError('');
+    }
+  }, [demoTrigger]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     let hasError = false;
-    if (!githubValue) { setGithubError('GitHub URL is required'); hasError = true; }
-    else if (!githubValid) { setGithubError('Must be a valid github.com URL'); hasError = true; }
-    else setGithubError('');
+    
+    if (!githubValue) {
+      setGithubError('GitHub URL is required');
+      hasError = true;
+    } else if (!githubValid) {
+      setGithubError('Must be a valid github.com URL');
+      hasError = true;
+    } else setGithubError('');
 
-    if (!linkedinValue) { setLinkedinError('LinkedIn URL is required'); hasError = true; }
-    else if (!linkedinValid) { setLinkedinError('Must be a valid linkedin.com URL'); hasError = true; }
-    else setLinkedinError('');
+    if (!linkedinValue) {
+      setLinkedinError('LinkedIn URL is required');
+      hasError = true;
+    } else if (!linkedinValid) {
+      setLinkedinError('Must be a valid linkedin.com URL');
+      hasError = true;
+    } else setLinkedinError('');
 
     if (hasError) return;
 
     setIsSubmitting(true);
     await new Promise((r) => setTimeout(r, 1800));
     setIsSubmitting(false);
-    
-    // Trigger confetti 
+
+    // Trigger confetti
     setShowConfetti(true);
     setTimeout(() => {
       setSubmitted(true);
@@ -82,22 +103,18 @@ export default function SubmissionForm({
 
   return (
     <>
-      {/* 
-        Confetti is now OUTSIDE the conditional render, 
-        so it stays mounted and finishes its timer perfectly.
-      */}
       <ConfettiExplosion active={showConfetti} onComplete={() => setShowConfetti(false)} />
-      
+
       {submitted ? (
         <div
-          className="rounded-2xl p-8 flex flex-col items-center gap-4 text-center"
+          className="rounded-2xl p-8 flex flex-col items-center gap-4 text-center animate-in zoom-in-95 duration-300"
           style={{
             background: 'linear-gradient(135deg, rgba(0,255,136,0.1), rgba(0,212,255,0.05))',
             border: '1px solid rgba(0,255,136,0.3)',
           }}
         >
           <div
-            className="w-16 h-16 rounded-full flex items-center justify-center animate-bounce-in"
+            className="w-16 h-16 rounded-full flex items-center justify-center animate-bounce"
             style={{ background: 'rgba(0,255,136,0.2)' }}
           >
             <CheckCircle2 size={32} className="text-green-400" />
@@ -110,7 +127,7 @@ export default function SubmissionForm({
           </div>
           <Link
             href="/dashboard"
-            className="px-6 py-3 rounded-xl font-bold text-sm text-white"
+            className="px-6 py-3 rounded-xl font-bold text-sm text-white mt-2 transition-transform hover:scale-105 active:scale-95"
             style={{ background: 'linear-gradient(135deg, #6C63FF, #00D4FF)' }}
           >
             Back to Dashboard →
@@ -119,13 +136,14 @@ export default function SubmissionForm({
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div
-            className="rounded-2xl p-4"
+            className="rounded-2xl p-4 transition-all duration-300"
             style={{
               background: 'rgba(255,255,255,0.03)',
               border: githubValid
                 ? '1px solid rgba(0,255,136,0.35)'
-                : '1px solid rgba(255,255,255,0.08)',
-              transition: 'border-color 0.3s ease',
+                : githubError 
+                  ? '1px solid rgba(251,146,60,0.4)' 
+                  : '1px solid rgba(255,255,255,0.08)',
             }}
           >
             <div className="flex items-center gap-3 mb-3">
@@ -140,41 +158,50 @@ export default function SubmissionForm({
                 <p className="text-[11px] text-gray-400">Link to your repo or specific commit</p>
               </div>
               {githubValid && (
-                <CheckCircle2 size={18} className="text-green-400 ml-auto flex-shrink-0" />
+                <CheckCircle2 size={18} className="text-green-400 ml-auto flex-shrink-0 animate-in zoom-in duration-300" />
               )}
             </div>
             <input
               type="url"
               value={githubValue}
-              onChange={(e) => { setGithubValue(e.target.value); setGithubError(''); }}
+              onChange={(e) => {
+                setGithubValue(e.target.value);
+                setGithubError('');
+              }}
               placeholder="https://github.com/username/repo/commit/..."
-              className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-gray-500 outline-none"
+              className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-gray-500 outline-none transition-all duration-200"
               style={{
                 background: 'rgba(255,255,255,0.05)',
-                border: githubValid ? '1px solid rgba(0,255,136,0.4)' : '1px solid rgba(255,255,255,0.1)',
+                border: githubValid
+                  ? '1px solid rgba(0,255,136,0.4)'
+                  : '1px solid rgba(255,255,255,0.1)',
               }}
             />
             {githubError && (
-              <p className="text-[11px] text-orange-400 mt-1.5 flex items-center gap-1">
+              <p className="text-[11px] text-orange-400 mt-1.5 flex items-center gap-1 animate-in slide-in-from-top-1">
                 <span>⚠</span> {githubError}
               </p>
             )}
           </div>
 
           <div
-            className="rounded-2xl p-4"
+            className="rounded-2xl p-4 transition-all duration-300"
             style={{
               background: 'rgba(255,255,255,0.03)',
               border: linkedinValid
                 ? '1px solid rgba(0,255,136,0.35)'
-                : '1px solid rgba(255,255,255,0.08)',
-              transition: 'border-color 0.3s ease',
+                : linkedinError 
+                  ? '1px solid rgba(251,146,60,0.4)'
+                  : '1px solid rgba(255,255,255,0.08)',
             }}
           >
             <div className="flex items-center gap-3 mb-3">
               <div
                 className="w-9 h-9 rounded-xl flex items-center justify-center"
-                style={{ background: 'rgba(10,102,194,0.2)', border: '1px solid rgba(10,102,194,0.3)' }}
+                style={{
+                  background: 'rgba(10,102,194,0.2)',
+                  border: '1px solid rgba(10,102,194,0.3)',
+                }}
               >
                 <LinkedinIcon size={18} style={{ color: '#0A66C2' }} />
               </div>
@@ -183,22 +210,27 @@ export default function SubmissionForm({
                 <p className="text-[11px] text-gray-400">Share what you built publicly</p>
               </div>
               {linkedinValid && (
-                <CheckCircle2 size={18} className="text-green-400 ml-auto flex-shrink-0" />
+                <CheckCircle2 size={18} className="text-green-400 ml-auto flex-shrink-0 animate-in zoom-in duration-300" />
               )}
             </div>
             <input
               type="url"
               value={linkedinValue}
-              onChange={(e) => { setLinkedinValue(e.target.value); setLinkedinError(''); }}
+              onChange={(e) => {
+                setLinkedinValue(e.target.value);
+                setLinkedinError('');
+              }}
               placeholder="https://linkedin.com/posts/..."
-              className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-gray-500 outline-none"
+              className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-gray-500 outline-none transition-all duration-200"
               style={{
                 background: 'rgba(255,255,255,0.05)',
-                border: linkedinValid ? '1px solid rgba(0,255,136,0.4)' : '1px solid rgba(255,255,255,0.1)',
+                border: linkedinValid
+                  ? '1px solid rgba(0,255,136,0.4)'
+                  : '1px solid rgba(255,255,255,0.1)',
               }}
             />
             {linkedinError && (
-              <p className="text-[11px] text-orange-400 mt-1.5 flex items-center gap-1">
+              <p className="text-[11px] text-orange-400 mt-1.5 flex items-center gap-1 animate-in slide-in-from-top-1">
                 <span>⚠</span> {linkedinError}
               </p>
             )}
@@ -206,7 +238,7 @@ export default function SubmissionForm({
 
           {streakShields > 0 && (
             <div
-              className="rounded-2xl p-4 flex items-center gap-3 cursor-pointer transition-all"
+              className="rounded-2xl p-4 flex items-center gap-3 cursor-pointer transition-all hover:bg-white/5"
               style={{
                 background: useShield ? 'rgba(0,212,255,0.08)' : 'rgba(255,255,255,0.02)',
                 border: useShield
@@ -224,17 +256,18 @@ export default function SubmissionForm({
               <div className="flex-1">
                 <p className="text-sm font-bold text-white">Use Streak Shield</p>
                 <p className="text-[11px] text-gray-400">
-                  {streakShields} shield{streakShields !== 1 ? 's' : ''} available — protects 1 missed day
+                  {streakShields} shield{streakShields !== 1 ? 's' : ''} available — protects 1
+                  missed day
                 </p>
               </div>
               <div
-                className="w-5 h-5 rounded-md flex items-center justify-center"
+                className="w-5 h-5 rounded-md flex items-center justify-center transition-colors"
                 style={{
                   background: useShield ? '#00D4FF' : 'rgba(255,255,255,0.08)',
                   border: '1px solid rgba(255,255,255,0.15)',
                 }}
               >
-                {useShield && <span className="text-[10px] font-bold text-black">✓</span>}
+                {useShield && <span className="text-[10px] font-bold text-black animate-in zoom-in">✓</span>}
               </div>
             </div>
           )}
@@ -242,7 +275,7 @@ export default function SubmissionForm({
           <button
             type="submit"
             disabled={!canSubmit || isSubmitting}
-            className="w-full py-4 rounded-2xl font-black text-base tracking-wide transition-all duration-200"
+            className="w-full py-4 rounded-2xl font-black text-base tracking-wide transition-all duration-300 active:scale-[0.98]"
             style={{
               background: canSubmit
                 ? 'linear-gradient(135deg, #6C63FF, #00D4FF)'
@@ -265,7 +298,7 @@ export default function SubmissionForm({
           </button>
 
           {canSubmit && !isSubmitting && (
-            <p className="text-center text-[11px] text-gray-500">
+            <p className="text-center text-[11px] text-gray-500 animate-in fade-in duration-500">
               Both GitHub + LinkedIn verified ✓ — ready to lock in Day {dayNumber}
             </p>
           )}

@@ -42,6 +42,7 @@ export default function ChallengeDayContent() {
   const [hintsOpen, setHintsOpen] = useState(false);
   const [countdown, setCountdown] = useState({ hours: '00', minutes: '00', seconds: '00' });
   const [visible, setVisible] = useState(false);
+  const [demoDataTrigger, setDemoDataTrigger] = useState(0);
 
   useEffect(() => {
     setCountdown(getTimeUntilMidnight());
@@ -421,20 +422,37 @@ export default function ChallengeDayContent() {
             border: '1px solid rgba(108,99,255,0.2)',
           }}
         >
-          <div className="mb-5">
-            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
-              Proof of Work
-            </p>
-            <h2 className="font-black text-lg text-foreground">Submit Your Proof</h2>
-            <p className="text-xs text-muted-foreground mt-1">
-              Push to GitHub + post on LinkedIn to lock in your streak
-            </p>
+          {/* ✨ Header with Demo Data Button ✨ */}
+          <div className="flex items-start justify-between mb-5">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                Proof of Work
+              </p>
+              <h2 className="font-black text-lg text-foreground">Submit Your Proof</h2>
+              <p className="text-xs text-muted-foreground mt-1">
+                Push to GitHub + post on LinkedIn to lock in your streak
+              </p>
+            </div>
+            
+            {/* 🧪 DEMO DATA BUTTON */}
+            <button
+              onClick={() => setDemoDataTrigger(prev => prev + 1)}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all active:scale-95 flex items-center gap-1.5 flex-shrink-0 hover:bg-white/5"
+              style={{
+                background: 'rgba(108,99,255,0.15)',
+                color: 'var(--primary)',
+                border: '1px solid rgba(108,99,255,0.3)',
+              }}
+            >
+              <Zap size={14} /> Demo Data
+            </button>
           </div>
 
           <SubmissionForm
             dayNumber={day.number}
             currentStreak={student.currentStreak}
             streakShields={student.streakShields}
+            demoTrigger={demoDataTrigger} /* <--- এটি SubmissionForm-এ পাঠানো হলো */
           />
         </div>
 
