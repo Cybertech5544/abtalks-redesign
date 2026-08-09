@@ -3,7 +3,7 @@
 A mobile-first redesign of the ABTalks 60-day coding challenge platform, built specifically for Indian college students. This redesign focuses on motivation, consistency, and a seamless late-night coding experience.
 
 ## Live Demo
-🔗 **[Visit Live Application](https://edubox.sbs)**
+🔗 **[Visit Live Application](https://abtalks-redesign.edubox.sbs)**
 
 ## Route Map
 
