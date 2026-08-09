@@ -239,7 +239,7 @@ export default function HeroSection() {
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-float">
+      <div className="w-full flex flex-col items-center justify-center gap-2 animate-float mt-24 pb-10">
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Scroll</p>
         <div
           className="w-5 h-9 rounded-full flex items-start justify-center pt-1.5"
